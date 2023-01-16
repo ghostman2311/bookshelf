@@ -1,9 +1,65 @@
-// 🐨 you'll need to import react and createRoot from react-dom up here
+import React from 'react'
+import {createRoot} from 'react-dom/client'
+import {Logo} from 'components/logo'
+import {Dialog} from '@reach/dialog'
+import '@reach/dialog/styles.css'
+import {VisuallyHidden} from '@reach/visually-hidden'
 
-// 🐨 you'll also need to import the Logo component from './components/logo'
+const LoginForm = ({handleSubmit, buttonText}) => {
+  const formSubmitHandler = e => {
+    const {email, password} = e.target.elements
 
-// 🐨 create an App component here and render the logo, the title ("Bookshelf"), a login button, and a register button.
-// 🐨 for fun, you can add event handlers for both buttons to alert that the button was clicked
+    e.preventDefault()
+    handleSubmit({email: email.value, password: password.value})
+  }
+  return (
+    <form onSubmit={formSubmitHandler}>
+      <input type="email" id="email" placeholder="Enter Email" />
+      <input placeholder="Enter Password" id="password" type="password" />
+      <button type="submit">{buttonText}</button>
+    </form>
+  )
+}
 
-// 🐨 use createRoot to render the <App /> to the root element
-// 💰 find the root element with: document.getElementById('root')
+const App = () => {
+  const [showModal, setShowModal] = React.useState('')
+  const handleSubmit = formData => {
+    console.log('formData', formData)
+  }
+
+  return (
+    <>
+      <Logo />
+      <h1>Bookshelf</h1>
+      <button onClick={() => setShowModal('login')}>Login</button>
+      <button onClick={() => setShowModal('register')}>Register</button>
+      <>
+        <Dialog
+          isOpen={showModal === 'login'}
+          onDismiss={() => setShowModal('')}
+          aria-label="Login Form"
+        >
+          <button className="close-button" onClick={() => setShowModal('')}>
+            <VisuallyHidden>Close</VisuallyHidden>
+            <span aria-hidden>×</span>
+          </button>
+          <LoginForm handleSubmit={handleSubmit} buttonText="Login" />
+        </Dialog>
+        <Dialog
+          isOpen={showModal === 'register'}
+          onDismiss={() => setShowModal('')}
+          aria-label="Register Form"
+        >
+          <button className="close-button" onClick={() => setShowModal('')}>
+            <VisuallyHidden>Close</VisuallyHidden>
+            <span aria-hidden>×</span>
+          </button>
+          <p>Register</p>
+        </Dialog>
+      </>
+    </>
+  )
+}
+
+const root = createRoot(document.getElementById('root'))
+root.render(<App />)
